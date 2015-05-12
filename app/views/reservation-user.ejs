@@ -1,0 +1,96 @@
+<%- include user-header %>
+
+<div class="dashboard-content">
+
+  <% if (!reservations.length) { %>
+    
+    <h2 class="subheader text-center">
+      No reservations yet.
+    </h2>
+
+  <% } else { %>
+
+  <div class="row">
+    <div class="small-12 columns">
+      
+      <h3>
+        Reservations
+      </h3>
+        
+
+      <table class="table-reservations">
+        <thead>
+          <tr>
+            <th>
+              Spectacol
+            </th>
+            <th>
+              Email
+            </th>
+            <th>
+              Locuri rezervate
+            </th>
+            <th>Locuri disponibile</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <% reservations.forEach(function(reservation){ %>
+            
+            <tr>
+
+              <td>
+                <a href="/<%= reservation.event._id %>" target="_blank"><%= reservation.event.name %></a>
+              </td>
+              
+              <td>
+                <%= reservation.email %>
+              </td>
+
+              <td>
+                
+                <form id="reservations-update">
+                  
+                  <input type="hidden" name="email" class="reserve-email" value="<%= reservation.email %>" required>
+
+                  <input type="hidden" name="waiting" class="reserve-waiting" value="<%= reservation.waiting %>" required>
+
+                  <input type="hidden" name="eventId" class="event-id" value="<%= reservation.event._id %>">
+
+                  <input type="hidden" name="reservationId" class="reserve-id" value="<%= reservation._id %>">
+
+                  <input type="number" min="1" max="5" name="seats" class="reserve-seats" value="<%= reservation.seats %>" >
+
+                  <button type="submit" class="button tiny">Save</submit>
+
+                </form>
+
+              </td>
+
+              <td style="text-align: center;">
+                <%= reservation.event.seats %>
+              </td>
+              
+              <td>
+                <a href="/reservations/<%= reservation.eventId %>/delete/<%= reservation._id %>" class="btn-delete-reservation" style="float:right">
+                  <i class="fa fa-times-circle"></i>
+                  Sterge rezervarea
+                </a>
+              </td>
+            </tr>
+
+          <% }) %>
+        
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <% } %>
+
+</div>
+
+
+<%- include dashboard-footer %>

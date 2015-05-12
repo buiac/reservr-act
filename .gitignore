@@ -1,0 +1,16 @@
+.tmp
+.sass-cache
+
+# PDFs
+*.pdf
+
+# data dir
+/data/
+
+# Editor
+.kateproject
+.kateproject.d
+*.kate-swp
+
+# private configs
+/config.tar

@@ -1,0 +1,9 @@
+{
+  "name": "reservr",
+  "version": "0.0.0",
+  "dependencies": {
+    "foundation": "^5.3.3",
+    "fontawesome": "~4.3.0",
+    "rome": "~2.1.17"
+  }
+}

@@ -1,0 +1,127 @@
+<%- include dashboard-header %>
+  
+  <div class="row">
+    <div class="small-12 columns">
+
+      <h3>Edit event</h3>
+      
+    </div>
+  </div>
+  
+  <form method="post" action="/dashboard/event" enctype="multipart/form-data">
+    
+    <div class="row">
+      
+      <div class="small-12 columns">
+        
+        <% if (errors.length) { %>
+        
+        <div data-alert class="alert-box warning">
+            
+            <% for(var i = 0; i < errors.length; i++) {%>
+               
+               <%= errors[i].msg %>
+
+            <% } %>
+
+          <a href="" class="close">&times;</a>
+
+        </div>
+
+        <% } %>
+        
+      </div> 
+
+    </div>
+
+    <div class="row">
+      <div class="medium-6 columns">
+      
+
+        <label>Event name:
+
+          <input type="text" placeholder="" name="name" value="<%= theEvent.name || '' %>" />
+
+        </label>
+
+        <label>Event location:
+
+          <input type="text" placeholder="" name="location" value="<%= theEvent.location || '' %>" />
+
+        </label>
+        
+
+        <label>Event description:
+
+          <textarea name="description" rows="12"><%= theEvent.description || '' %></textarea>
+
+        </label>
+        
+      </div>
+      
+      <div class="medium-6 columns">
+
+        <% if(theEvent.images && theEvent.images.length) { %>
+      
+          <ul class="clearing-thumbs event-images" data-clearing>
+            
+            <% theEvent.images.forEach(function(image, i){  %>
+              
+              <li class="event-image-thumb <% if (image.active) { %> active-image <% } %>" >
+                
+                <a href="<%= image.path %>" class="th">
+                  <img src="<%= image.path %>" width="100">
+                </a>
+                
+                <a href="/dashboard/event/<%= theEvent._id %>/deleteimage/<%= i %>" class="btn-delete-image" title="Delete image">
+                  <i class="fa fa-times-circle"></i>
+                </a>
+              
+              </li>
+
+            <% }) %>
+            
+          </ul>
+        
+        <% } %>
+      
+        <label>
+          Event images:
+          <input type="file" name="images" multiple>
+        </label>
+        
+        <label>
+          Event date:
+
+          <input type="text" name="date" value="<%= moment(theEvent.date).format() %>" class="event-date" required>
+        </label>
+
+        <label>
+          Event seats:
+
+          <input type="text" name="seats" value="<%= theEvent.seats || '' %>" required>
+        </label>
+
+        <input type="hidden" name="_id" value="<%= theEvent._id || '' %>">
+        
+        <% if(theEvent.images && theEvent.images.length) { %>
+          <input type="hidden" name="existingImages" value="<%= JSON.stringify(theEvent.images) %>">
+        <% } %>
+        
+        <% if (theEvent._id) { %>
+
+          <a href="/dashboard/eventdelete/<%= theEvent._id %>" class="button alert tiny">Delete event</a>
+
+        <% } %>
+        
+        <button class="button right" type="submit">
+          Save
+        </button>
+
+      </div>
+    </div>
+    
+  </form>
+
+ <%- include dashboard-footer %>
+ 

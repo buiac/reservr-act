@@ -1,159 +1,136 @@
 #!/bin/env node
-//  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
-
-
-/**
- *  Define the sample application.
+/* server
  */
-var SampleApp = function() {
 
-    //  Scope.
-    var self = this;
+module.exports = (function() {
+  'use strict';
 
+  var express = require('express');
+  var request = require('superagent');
+  var async = require('async');
+  var fs = require('fs');
+  var knox = require('knox');
+  var multer = require('multer');
+  var moment = require('moment');
+  var marked = require('marked');
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+  var bodyParser = require('body-parser');
+  var errorhandler = require('errorhandler');
+  var basicAuth = require('basic-auth-connect');
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+  var app = express();
 
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
-    };
+  // validation library for whatever comes in through the forms
+  var expressValidator = require('express-validator');
 
+  // configs
+  var config = require('./config/config.js');
 
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
+  // Admin auth
+  var adminAuth = function(req, res, next) {
+    
+    if(!process.env.OPENSHIFT_APP_NAME) {
+      return next();
+    }
+    
+    return basicAuth(function(user, pass) {
+      return (user === config.admin.user && pass === config.admin.password);
+    })(req, res, next);
+    
+  };
 
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
+  // globals in templates
+  app.use(function(req, res, next){
+    res.locals.moment = moment;
+    res.locals.marked = marked;
+    res.locals.JSON = JSON;
+    next();
+  });
+  
+  // config express
+  app.use(bodyParser.json({
+    limit: '50mb'
+  }));
 
+  app.use(bodyParser.urlencoded({
+    limit: '50mb',
+    extended: true
+  }));
 
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
+  // config file uploads folder
+  app.use(multer({
+    dest: config.dataDir + config.publicDir + '/media',
+    rename: function (fieldname, filename) {
+      return filename;
+    }
+  }));
 
+  app.use(expressValidator());
 
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
-        }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
-    };
+  app.set('views', __dirname + '/app/views');
+  app.set('view engine', 'ejs');
 
+  app.use(express.static(__dirname + config.publicDir));
+  app.use(express.static(config.dataDir + config.publicDir));
 
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
+  app.use(errorhandler());
 
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
-        });
-    };
+  // datastore
+  var Datastore = require('nedb');
+  
+  var db = new Datastore({
+    filename: config.dataDir + config.dbDir + '/reservr.db',
+    autoload: true
+  });
 
+  // events datastore
+  db.events = new Datastore({
+    filename: config.dataDir + config.dbDir + '/events.db',
+    autoload: true
+  });
 
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
+  // reservations datastore
+  db.reservations = new Datastore({
+    filename: config.dataDir + config.dbDir + '/reservations.db',
+    autoload: true
+  });
 
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
+  // controllers
+  var index = require('./app/controllers/index.js')(config, db);
+  var dashboard = require('./app/controllers/dashboard.js')(config, db);
+  var reservations = require('./app/controllers/reservations.js')(config, db);
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
+  // public routes
+  app.get('/', index.view);
+  app.get('/event/:eventId', index.eventView);
+  
+  // dashboard
+  app.get('/dashboard', adminAuth, dashboard.view);
+  app.get('/dashboard/event', adminAuth, dashboard.eventEditView);
+  app.get('/dashboard/event/:eventId', adminAuth, dashboard.eventEditView);
+  app.post('/dashboard/event', dashboard.eventCreate);
+  app.get('/dashboard/eventdelete/:eventId', dashboard.eventDelete);
+  
+  app.get('/dashboard/event/:eventId/deleteimage/:pictureIndex', dashboard.eventDeleteImage);
 
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
+  // reservations
+  app.get('/reservations/:eventId', adminAuth, reservations.view);
+  app.post('/reservations/:eventId', reservations.create);
+  app.get('/reservations/:eventId/delete/:reservationId', adminAuth, reservations.reservationDelete);
+  app.get('/reservations/userview/:reservationId', reservations.userView);
 
+  app.post('/reservations/update/:eventId', reservations.update);
 
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
+  // start express server
+  app.listen(config.port, config.ipAddress, function() {
+    console.log(
+      '%s: Node server started on %s:%d ...',
+      Date(Date.now()),
+      config.ipAddress,
+      config.port
+    );
+  });
 
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
+  return app;
 
-
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
-
-        // Create the express server and routes.
-        self.initializeServer();
-    };
-
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
-        });
-    };
-
-};   /*  Sample Application.  */
-
-
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
-
+}());

@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>
+    reservr
+  </title>
+
+  <link rel="stylesheet" href="/bower_components/foundation/css/normalize.css">
+  <link rel="stylesheet" href="/bower_components/foundation/css/foundation.css">
+  <link rel="stylesheet" href="/bower_components/fontawesome/css/font-awesome.min.css">
+  
+  <link rel="stylesheet" href="/css/site.css">
+  
+</head>
+<body>
+
+  <header class="header">
+
+    <div class="row">
+      
+      <div class="small-12 columns">
+        
+        <a href="/" class="logo">
+          <img src="/images/logo-white.png" width="80" height="13" class="logo-reservr">
+          <img src="/images/logo-reactor.png" width="234" height="37" class="logo-client">
+        </a>
+        
+      </div>
+      
+    </div>
+    
+  </header>
+
+  
+  <div class="events-list">
+  
+    <% if(!events.length) { %>
+    
+      <h2 class="subheader text-center">
+        Nu avem evenimente planificate în următoarele <%= activeInterval.label %>.
+      </h2>
+    
+    <% } %>
+  
+    <% events.forEach(function(event, i) { %>
+    
+      <div class="row event">
+        
+        <div class="medium-6 column">
+          
+          <div class="event-slider">
+
+            <ul class="clearing-thumbs clearing-feature" data-clearing>
+              
+              <% event.images.forEach(function(image, i){  %>
+                
+                <li class="<%= (i === 0) ? 'clearing-featured-img' : '' %>">
+                  
+                  <img src="<%= image.path %>">
+                
+                </li>
+
+              <% }) %>
+
+            </ul>
+            
+          </div>
+          
+        </div>
+        
+        <div class="medium-6 columns event-details">
+          
+          <h2>
+            <%= event.name %>
+          </h2>
+          
+          <div class="row">
+            
+            <div class="small-6 columns event-meta">
+              <i class="fa fa-clock-o"></i>
+              
+              <%= moment(event.date).format('LLLL') %>
+            </div>
+          </div>
+          <div class="row">
+            
+          
+            <div class="small-12 columns event-meta">
+              <i class="fa fa-map-marker"></i>
+              
+              <%= event.location || '' %>
+            </div>
+          </div>  
+          
+          
+          <div class="event-description">
+            <%- marked(event.description) %>
+          </div>
+          
+          <% if(event.description.length > 300) { %>
+          
+            <a class="event-toggle-description">
+              <span class="event-toggle-description-show">
+                vezi descrierea completă
+              </span>
+              <span class="event-toggle-description-hide">
+                ascunde descrierea completă
+              </span>
+            </a>
+            
+          <% } %>
+          
+          <div class="row reserve-actions<%  if (event.seats == 0) {%> no-more-seats<% } %>">
+            
+            <div class="medium-6 columns">
+              
+              <div class="container-reserve">
+                <div class="container-reserve-btn">
+                  
+                  <span class="hide-if-seats">Lista de asteptare</span>
+                  <span class="show-if-seats">Rezervă locuri</span>
+                </div>
+                
+                <form class="container-reserve-form">
+                  
+                  <label>
+                    Email
+                    <input type="email" name="email" class="reserve-email" required>
+                  </label>
+                  
+                  <label>
+                    Numar de locuri
+                    <input type="number" min="1" max="5" name="seats" class="reserve-seats" value="1" required>
+                  </label>
+
+                  <input type="hidden" name="eventId" class="reserve-id" value="<%= event._id %>">
+                  
+                  <% if (event.seats > 0) { %>
+                    
+                    <input type="hidden" name="waiting" class="reserve-waiting" value="false">
+
+                  <% } else { %>
+                    
+                    <input type="hidden" name="waiting" class="reserve-waiting" value="true">
+
+                  <% } %>
+                  
+                  <button type="submit">
+                    <span class="hide-if-seats">Adauga-ma pe lista de asteptare</span>
+                    <span class="show-if-seats">Rezervă locuri</span>
+                  </button>
+                  
+                  <span class="container-reserve-form-success">
+                    <i class="fa fa-check"></i>
+                    Rezervarea a fost facuta. Un email de confirmare a fost trimis pe adresa ta.
+                  </span>
+                  
+                  <span class="container-reserve-form-error">
+                    <i class="fa fa-times"></i>
+                    Rezervarea a esuat. Incercati mai tarziu.
+                  </span>
+                  
+                </form>
+              </div>
+              
+            </div>
+            
+            <div class="medium-6 columns">
+              
+
+                <span class="free-seats show-if-seats">
+                  <%= event.seats %> locuri disponibile
+                </span>
+
+                <span class="free-seats hide-if-seats">
+                  Locuri epuizate
+                </span>
+
+              
+            </div>
+            
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      
+    <% }) %>
+  
+  
+  </div>
+  
+  <footer class="row footer">
+    
+    <div class="small-12">
+      &copy; 2015 reservr.net
+    </div>
+    
+  </div>
+
+  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/bower_components/foundation/js/vendor/modernizr.js"></script>
+  <script src="/bower_components/foundation/js/vendor/fastclick.js"></script>
+  <script src="/bower_components/foundation/js/foundation.min.js"></script>
+  
+  <script src="/js/site.js"></script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-2294103-10', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</body>
+</html>

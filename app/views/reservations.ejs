@@ -1,0 +1,121 @@
+<%- include dashboard-header %>
+
+<div class="dashboard-content">
+
+  <% if (!reservations.length) { %>
+    
+    <h2 class="subheader text-center">
+      No reservations yet.
+    </h2>
+
+  <% } else { %>
+
+  <div class="row">
+    <div class="small-12 columns">
+      
+      <h3>
+        Reservations
+      </h3>
+      
+      <table class="table-reservations">
+        <thead>
+          <tr>
+            <th>
+              Name
+            </th>
+            <th>
+              Email
+            </th>
+            <th>
+              Seats
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <% reservations.forEach(function(reservation){ %>
+            
+            <% if (!reservation.waiting) { %>
+              <tr>
+                <td>
+                  <%= reservation.name %>
+                </td>
+                <td>
+                  <%= reservation.email %>
+                </td>
+                <td>
+                  <%= reservation.seats %>
+                </td>
+                <td>
+                  <a href="/reservations/<%= reservation.eventId %>/delete/<%= reservation._id %>" class="btn-delete-reservation">
+                    <i class="fa fa-times-circle"></i>
+                    Delete Reservation
+                  </a>
+                </td>
+              </tr>
+            <% } %>
+
+          <% }) %>
+        
+        </tbody>
+      </table>
+
+
+      <h3>
+        Waiting list
+      </h3>
+      
+      <table class="table-reservations">
+        <thead>
+          <tr>
+            <th>
+              Name
+            </th>
+            <th>
+              Email
+            </th>
+            <th>
+              Seats
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <% reservations.forEach(function(reservation){ %>
+            
+            <% if (reservation.waiting) { %>
+              <tr>
+                <td>
+                  <%= reservation.name || '' %>
+                </td>
+                <td>
+                  <%= reservation.email %>
+                </td>
+                <td>
+                  <%= reservation.seats %>
+                </td>
+                <td>
+                  <a href="/reservations/<%= reservation.eventId %>/delete/<%= reservation._id %>" class="btn-delete-reservation">
+                    <i class="fa fa-times-circle"></i>
+                    Delete Reservation
+                  </a>
+                </td>
+              </tr>
+            <% } %>
+
+          <% }) %>
+        
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <% } %>
+
+</div>
+
+
+<%- include dashboard-footer %>
