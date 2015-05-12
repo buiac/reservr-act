@@ -37,7 +37,7 @@ body {
  */
 
 .menu-header {
-  background: #ffdd08;
+  background: #2498CA;
   
   color: #333;
 }
@@ -168,9 +168,13 @@ body {
 .container-reserve {
   display: block;
   width: 100%;
-  background: #ffdd08;
+  background: #2498CA;
   
   color: #333;
+}
+
+.container-reserve .button {
+  background: #FFF;
 }
 
 .no-more-seats .container-reserve{
@@ -200,10 +204,11 @@ body {
   
   text-align: center;
   cursor: pointer;
+  color: #FFF;
 }
 
 .container-reserve-btn:hover {
-  background: #CDBC53;
+  background: #52B3DD;
 }
 
 .container-reserve-form {
@@ -217,6 +222,12 @@ body {
 
 .container-reserve-form button {
   margin: 0;
+  background: transparent;
+  border: 1px solid #ddd;
+}
+
+.container-reserve-form label {
+  color: #FFF;
 }
 
 .container-reserve-form,
