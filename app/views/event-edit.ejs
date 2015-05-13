@@ -94,10 +94,10 @@
 
         <div class="event-type">
           
-          <input type="radio" name="eventType" id="one-day" value="0" checked>
+          <input type="radio" name="eventType" id="one-day" value="0" <% if (theEvent.eventType == 0) { %> checked <% } %> >
           <label for="one-day">One Day Event</label>
 
-          <input type="radio" name="eventType" id="multiple-day" value="1">
+          <input type="radio" name="eventType" id="multiple-day" value="1" <% if (theEvent.eventType == 1) { %> checked <% } %>>
           <label for="multiple-day">Multiple Days Event</label>
 
         </div>
@@ -109,9 +109,48 @@
           <input type="text" name="date" value="<%= moment(theEvent.date).format() %>" class="event-date" required>
         </label>
         
+
         <div class="event-multiple-days">
 
           <div class="days-interval">
+
+            <% if (theEvent.days && theEvent.days.length) { %>
+              
+              <% for (var i = 0; i < theEvent.days.length; i++) { %>
+                <div class="day row">
+                  
+                  <div class="medium-3 columns">
+                    
+                    <label>Day</label>
+                    
+                    <input type="text" name="eventDay<%= i %>" value="<%= moment(theEvent.days[i].start).format('YYYY-MM-DD') %>" class="event-interval-day" required>
+
+                  </div>
+
+                  <div class="medium-3 columns">
+                    
+                    <label>Start Time</label>
+                    
+                    <input type="text" name="eventStart<%= i %>" value="<%= moment(theEvent.days[i].start).format('HH') %>:<%= moment(theEvent.days[i].start).format('mm') %>" class="event-interval-hour-start" required>
+
+                  </div>
+                  
+                  <div class="medium-3 columns">
+                    
+                    <label>End Time</label>
+                    
+                    <input type="text" name="eventEnd<%= i %>" value="<%= moment(theEvent.days[i].end).format('HH') %>:<%= moment(theEvent.days[i].end).format('mm') %>" class="event-interval-hour-end" required>
+
+                  </div>
+
+                  <div class="medium-3 columns">
+                    <a href="" class="remove-day"><i class="fa fa-times-circle"></i></a>
+                  </div>
+                
+                </div> <!-- day -->
+              <% } %>
+
+            <% } else { %>
 
             <div class="day row">
               
@@ -144,6 +183,8 @@
               </div>
             
             </div> <!-- day -->
+
+            <% } %>
 
           </div> <!-- days-interval -->
 

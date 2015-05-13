@@ -61,6 +61,8 @@ module.exports = (function(config, db) {
     })
     .exec(function (err, events) {
 
+      console.log(events);
+
       if(err) {
         return res.render('dashboard', {
           errors: err

@@ -42,7 +42,7 @@ module.exports = (function(config, db) {
     });
         
     var dateFilters = {
-      $lte: defaultInterval,
+      $lte: defaultInterval.format('YYYY-MM-DD'),
       $gte: new Date()
     };
     
@@ -68,7 +68,7 @@ module.exports = (function(config, db) {
     
     db.events
     .find({
-      date: dateFilters
+      //date: dateFilters
     })
     .sort({
       date: 1

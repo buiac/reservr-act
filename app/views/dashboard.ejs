@@ -54,6 +54,8 @@
             </h2>
           </a>
           
+          <% if (event.eventType === 0) { %>
+          
           <div class="row">
             
             <div class="small-6 columns event-meta">
@@ -61,7 +63,26 @@
               
               <%= moment(event.date).format('LLLL') %>
             </div>
+
           </div>
+
+          <% } else if (event.eventType === 1) { %>
+            
+            <% for (var i = 0; i < event.days.length; i++) { %>
+              <div class="row">
+                
+                <div class="small-12 columns event-meta">
+                  <i class="fa fa-clock-o"></i>
+                  
+                  Ziua <%= i+1 %>: <%= moment(event.days[i].start).format('dddd, D MMMM YYYY') %> intre <%= moment(event.days[i].start).format('HH:mm') %> si <%= moment(event.days[i].end).format('HH:mm') %>
+                </div>
+
+              </div>
+
+            <% } %>
+
+          <% } %>
+
           <div class="row">
             
           
