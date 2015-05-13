@@ -317,3 +317,11 @@ body {
 .clearing-thumbs li {
   max-width: 100%;
 }
+
+.multiple-days .row .event-meta{
+  margin-bottom: 5px;
+}
+
+.multiple-days .row:last-child .event-meta {
+  margin-bottom: 20px;
+}

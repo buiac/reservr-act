@@ -156,9 +156,6 @@ img.logo-cae {
   top: 27px;
   left: -17px;
 }
-
-
-
 .remove-day {
   float: left;
   margin: 28px 0 0;
@@ -180,12 +177,22 @@ form .event-multiple-days .day .fa-times-circle {
   color: #333;
 }
 
-
 form .event-multiple-days .day .fa-times-circle:hover {
   color: #008CBA;
 }
 
-
 .event-multiple-days .day:first-child .remove-day{
   display: none;
+}
+
+.days-interval .day {
+  margin: 0 0 10px 0;
+}
+
+.multiple-days .row .event-meta{
+  margin-bottom: 5px;
+}
+
+.multiple-days .row:last-child .event-meta {
+  margin-bottom: 20px;
 }
