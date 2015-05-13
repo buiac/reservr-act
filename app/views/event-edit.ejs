@@ -123,7 +123,7 @@
                     
                     <label>Day</label>
                     
-                    <input type="text" name="eventDay<%= i %>" value="<%= moment(theEvent.days[i].start).format('YYYY-MM-DD') %>" class="event-interval-day" required>
+                    <input type="text" name="eventDay<%= i %>" value="<%= moment(theEvent.days[i].start).format('YYYY-MM-DD') %>" class="event-interval-day" >
 
                   </div>
 
@@ -131,7 +131,7 @@
                     
                     <label>Start Time</label>
                     
-                    <input type="text" name="eventStart<%= i %>" value="<%= moment(theEvent.days[i].start).format('HH') %>:<%= moment(theEvent.days[i].start).format('mm') %>" class="event-interval-hour-start" required>
+                    <input type="text" name="eventStart<%= i %>" value="<%= moment(theEvent.days[i].start).format('HH') %>:<%= moment(theEvent.days[i].start).format('mm') %>" class="event-interval-hour-start" >
 
                   </div>
                   
@@ -139,7 +139,7 @@
                     
                     <label>End Time</label>
                     
-                    <input type="text" name="eventEnd<%= i %>" value="<%= moment(theEvent.days[i].end).format('HH') %>:<%= moment(theEvent.days[i].end).format('mm') %>" class="event-interval-hour-end" required>
+                    <input type="text" name="eventEnd<%= i %>" value="<%= moment(theEvent.days[i].end).format('HH') %>:<%= moment(theEvent.days[i].end).format('mm') %>" class="event-interval-hour-end" >
 
                   </div>
 
