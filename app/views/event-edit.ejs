@@ -97,6 +97,33 @@
         </label>
 
         <label>
+          Event interval:
+        </label>
+        
+        <div class="days-interval">
+
+          <div class="day">
+            
+            <label>Day</label>
+            
+            <input type="text" name="date" value="" class="event-interval-day" required>
+            
+            <label>Start Time</label>
+            
+            <input type="text" name="date" value="" class="event-interval-hour-start" required>
+            
+            <label>End Time</label>
+            
+            <input type="text" name="date" value="" class="event-interval-hour-end" required>
+          
+          </div> <!-- day -->
+
+        </div> <!-- days-interval -->
+
+        <a href="" class="add-day">Add day</a>
+
+
+        <label>
           Event seats:
 
           <input type="text" name="seats" value="<%= theEvent.seats || '' %>" required>

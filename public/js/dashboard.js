@@ -7,6 +7,9 @@
   $(document).foundation();
   
   var $datePicker = document.querySelector('.event-date');
+  var $dayPicker = document.querySelector('.event-interval-day');
+  var $timeStartPicker = document.querySelector('.event-interval-hour-start');
+  var $timeEndPicker = document.querySelector('.event-interval-hour-end');
   
   if($datePicker) {
   
@@ -15,7 +18,88 @@
       weekStart: 1
     });
   
+  }
+
+  if($dayPicker) {
+  
+    // init rome day picker
+    rome($dayPicker, {
+      weekStart: 1,
+      time: false
+    });
+  
+  }
+
+  if($timeStartPicker) {
+  
+    // init rome day picker
+    rome($timeStartPicker, {
+      weekStart: 1,
+      date: false
+    });
+  
+  }
+
+  if($timeEndPicker) {
+  
+    // init rome day picker
+    rome($timeEndPicker, {
+      weekStart: 1,
+      date: false
+    });
+  
+  }
+
+  // add a new date interval
+  var addDay = function (e) {
+
+    e.preventDefault();
+
+    // the current number of already added intervals
+    var index = $('.days-interval').children().length;
+
+    // get first element in group since it's the first without 
+    var $dayClone = $($('.days-interval').children()[0]).clone();
+
+    var $clonedInputs = $dayClone.find('input');
+
+    $clonedInputs.each(function (i, input) {
+      
+      
+      var initialClass = $(input).attr('class');
+
+       // remove rome data
+      $(input).removeAttr('data-rome-id');
+
+      // initialize rome
+      if (initialClass.indexOf('event-interval-day') >= 0) {
+        rome($dayPicker, {
+          weekStart: 1,
+          time: false
+        });
+      }
+
+
+      // increment class name
+      $(input).attr('class', initialClass + '-' + index);
+
+     
+
+      // initialize rome datepicker      
+
+
+
+    });
+
+    $('.days-interval').append($dayClone);
+    
   };
+
+  $('.add-day').on('click', addDay);
+
+
+
+
   
   $('.btn-delete-image').on('click', function(e) {
     e.stopPropagation();
