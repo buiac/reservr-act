@@ -2,7 +2,7 @@
  */
 
 .header {
-  border-bottom: 4px solid #ffdd08;
+  border-bottom: 4px solid #2498CA;
   margin-bottom: 10px;
 }
 
@@ -20,7 +20,12 @@
 
 .logo img {
   width: auto;
-  max-height: 14px;
+  max-height: 16px;
+}
+
+img.logo-cae {
+  max-height: 32px;
+  vertical-align: -8px;
 }
 
 .btn-event-new {
@@ -150,4 +155,9 @@
   position: absolute;
   top: 27px;
   left: -17px;
+}
+
+.days-interval .day {
+  border: 1px solid red;
+  margin: 0 0 10px 0;
 }
