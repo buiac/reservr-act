@@ -157,7 +157,35 @@ img.logo-cae {
   left: -17px;
 }
 
-.days-interval .day {
-  border: 1px solid red;
-  margin: 0 0 10px 0;
+
+
+.remove-day {
+  float: left;
+  margin: 28px 0 0;
+}
+
+.event-multiple-days {
+  margin: 0 0 20px;
+}
+
+form .event-multiple-days .day {
+  background: #fff;
+  padding-top: 10px;
+  box-shadow: rgba(0,0,0,.5) 0 0 1px;
+  margin: 0 0 10px;
+}
+
+form .event-multiple-days .day .fa-times-circle {
+  font-size: 20px;
+  color: #333;
+}
+
+
+form .event-multiple-days .day .fa-times-circle:hover {
+  color: #008CBA;
+}
+
+
+.event-multiple-days .day:first-child .remove-day{
+  display: none;
 }

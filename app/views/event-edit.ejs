@@ -40,20 +40,20 @@
 
         <label>Event name:
 
-          <input type="text" placeholder="" name="name" value="<%= theEvent.name || '' %>" />
+          <input type="text" placeholder="" name="name" value="<%= theEvent.name || '' %>" required />
 
         </label>
 
         <label>Event location:
 
-          <input type="text" placeholder="" name="location" value="<%= theEvent.location || '' %>" />
+          <input type="text" placeholder="" name="location" value="<%= theEvent.location || '' %>" required />
 
         </label>
         
 
         <label>Event description:
 
-          <textarea name="description" rows="12"><%= theEvent.description || '' %></textarea>
+          <textarea required name="description" rows="12"><%= theEvent.description || '' %></textarea>
 
         </label>
         
@@ -90,38 +90,68 @@
           <input type="file" name="images" multiple>
         </label>
         
-        <label>
+        <label>Event Type:</label>
+
+        <div class="event-type">
+          
+          <input type="radio" name="eventType" id="one-day" value="0" checked>
+          <label for="one-day">One Day Event</label>
+
+          <input type="radio" name="eventType" id="multiple-day" value="1">
+          <label for="multiple-day">Multiple Days Event</label>
+
+        </div>
+        
+        
+        <label class="event-one-day">
           Event date:
 
           <input type="text" name="date" value="<%= moment(theEvent.date).format() %>" class="event-date" required>
         </label>
-
-        <label>
-          Event interval:
-        </label>
         
-        <div class="days-interval">
+        <div class="event-multiple-days">
 
-          <div class="day">
+          <div class="days-interval">
+
+            <div class="day row">
+              
+              <div class="medium-3 columns">
+                
+                <label>Day</label>
+                
+                <input type="text" name="eventDay0" value="" class="event-interval-day" required>
+
+              </div>
+
+              <div class="medium-3 columns">
+                
+                <label>Start Time</label>
+                
+                <input type="text" name="eventStart0" value="" class="event-interval-hour-start" required>
+
+              </div>
+              
+              <div class="medium-3 columns">
+                
+                <label>End Time</label>
+                
+                <input type="text" name="eventEnd0" value="" class="event-interval-hour-end" required>
+
+              </div>
+
+              <div class="medium-3 columns">
+                <a href="" class="remove-day"><i class="fa fa-times-circle"></i></a>
+              </div>
             
-            <label>Day</label>
-            
-            <input type="text" name="date" value="" class="event-interval-day" required>
-            
-            <label>Start Time</label>
-            
-            <input type="text" name="date" value="" class="event-interval-hour-start" required>
-            
-            <label>End Time</label>
-            
-            <input type="text" name="date" value="" class="event-interval-hour-end" required>
+            </div> <!-- day -->
+
+          </div> <!-- days-interval -->
+
+          <a href="" class="add-day"><i class="fa fa-plus-circle"></i> Add day</a>
           
-          </div> <!-- day -->
+          <input type="hidden" name="eventDaysNumber" class="event-days-number" value="0">
 
-        </div> <!-- days-interval -->
-
-        <a href="" class="add-day">Add day</a>
-
+        </div> <!-- event-multiple-days -->
 
         <label>
           Event seats:

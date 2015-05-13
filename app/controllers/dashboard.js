@@ -114,10 +114,13 @@ module.exports = (function(config, db) {
     req.checkBody('seats', 'Event seats should not be empty').notEmpty();
     req.checkBody('location', 'Event location should not be empty').notEmpty();
 
+
+
     var errors = req.validationErrors();
     var images = [];
-    
+        
     var name = (req.body.name) ? req.body.name.trim() : '';
+    var eventType = parseInt(req.body.eventType);
     var description = (req.body.description) ? req.body.description.trim() : '';
     var eventId = (req.body._id) ? req.body._id.trim() : '';
     var seats = (req.body.seats) ? req.body.seats.trim() : '';
@@ -127,14 +130,48 @@ module.exports = (function(config, db) {
 
     var theEvent = {
       name: name,
+      eventType: eventType,
       description: description,
       _id: eventId || '',
       images: images,
-      date: new Date(req.body.date),
       seats: seats,
       location: location,
       activeImage: activeImage
     };
+
+    // check if single day event or multiple days event
+    if (theEvent.eventType === 0) {
+
+      theEvent.date = req.body.date;
+
+    } else if (theEvent.eventType === 1) {
+
+      // multiple day event
+
+      var daysNo = parseInt(req.body.eventDaysNumber);
+      var days = [];
+
+      for (var i = 0; i <= daysNo; i++) {
+
+        // set the date for the first day of the event
+        if (i === 0) {
+          theEvent.date = req.body['eventDay' + i];
+        }
+
+        var day = {
+          start: new Date(req.body['eventDay' + i] + ' ' + req.body['eventStart' + i]),
+          end: new Date(req.body['eventDay' + i] + ' ' + req.body['eventEnd' + i])
+        };
+
+        days.push(day);
+
+      }
+
+      theEvent.days = days;
+
+      console.log(theEvent.days);      
+
+    }
     
     // check if there's an image
     if (!req.files.images) {

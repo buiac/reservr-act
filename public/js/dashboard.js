@@ -7,9 +7,7 @@
   $(document).foundation();
   
   var $datePicker = document.querySelector('.event-date');
-  var $dayPicker = document.querySelector('.event-interval-day');
-  var $timeStartPicker = document.querySelector('.event-interval-hour-start');
-  var $timeEndPicker = document.querySelector('.event-interval-hour-end');
+  
   
   if($datePicker) {
   
@@ -20,35 +18,47 @@
   
   }
 
-  if($dayPicker) {
-  
-    // init rome day picker
-    rome($dayPicker, {
-      weekStart: 1,
-      time: false
-    });
-  
-  }
+  // initialize rome for the days interval
+  var initRomeInterval = function (index) {
+    
+    var day = $('.days-interval').children()[index];
+    var inputs = $(day).find('input');
 
-  if($timeStartPicker) {
-  
-    // init rome day picker
-    rome($timeStartPicker, {
-      weekStart: 1,
-      date: false
-    });
-  
-  }
+    $.each(inputs, function (i, input) {
+      
+      if (input.getAttribute('class').indexOf('event-interval-day') >= 0) {
+ 
+        rome(input, {
+          weekStart: 1,
+          time: false
+        });
+        
+      }
 
-  if($timeEndPicker) {
-  
-    // init rome day picker
-    rome($timeEndPicker, {
-      weekStart: 1,
-      date: false
+      if (input.getAttribute('class').indexOf('event-interval-hour-start') >= 0) {
+ 
+        rome(input, {
+          weekStart: 1,
+          date: false
+        });
+
+      }
+
+      if (input.getAttribute('class').indexOf('event-interval-hour-end') >= 0) {
+
+        rome(input, {
+          weekStart: 1,
+          date: false
+        });
+        
+      }
+
     });
-  
-  }
+
+  };
+
+  // init rome for the first day interval
+  initRomeInterval(0);
 
   // add a new date interval
   var addDay = function (e) {
@@ -65,45 +75,41 @@
 
     $clonedInputs.each(function (i, input) {
       
-      
       var initialClass = $(input).attr('class');
+      var initialName = $(input).attr('name').substring(0, $(input).attr('name').length - 1);
 
        // remove rome data
       $(input).removeAttr('data-rome-id');
 
-      // initialize rome
-      if (initialClass.indexOf('event-interval-day') >= 0) {
-        rome($dayPicker, {
-          weekStart: 1,
-          time: false
-        });
-      }
-
-
-      // increment class name
-      $(input).attr('class', initialClass + '-' + index);
-
-     
-
-      // initialize rome datepicker      
-
-
+      // increment class/name
+      $(input).attr('class', initialClass + index);
+      $(input).attr('name',  initialName + index);
 
     });
 
     $('.days-interval').append($dayClone);
+
+    // update number of days
+    $('.event-days-number').val(parseInt($('.event-days-number').val()) + 1);
+
+    initRomeInterval(index);
     
   };
 
-  $('.add-day').on('click', addDay);
+  // remove day interval
+  var removeDay = function (e) {
+
+    e.preventDefault();
+
+    $(this).parents('.day').remove();
+
+    // update number of days
+    $('.event-days-number').val(parseInt($('.event-days-number').val()) - 1);
+    
+    
+  };
 
 
-
-
-  
-  $('.btn-delete-image').on('click', function(e) {
-    e.stopPropagation();
-  });
 
   // add a radio input to the image list. trying to select a default image
   // for the event
@@ -184,8 +190,63 @@
     
   };
 
+  var selectEventType = function (e) {
+    
+    var eventType = $(this).attr('id');
+
+    if (eventType.indexOf('one-day') >= 0) {
+
+      $('.event-multiple-days').hide();
+      $('.event-one-day').show();
+
+      // toggle 'required' attributees
+      $('.event-multiple-days input').removeAttr('required');
+      $('.event-one-day input').attr('required','required');
+
+    } else if (eventType.indexOf('multiple-day') >= 0) {
+
+      $('.event-multiple-days').show();
+      $('.event-one-day').hide();
+
+      // toggle 'required' attributees
+      $('.event-multiple-days input').attr('required','required');
+      $('.event-one-day input').removeAttr('required');
+
+    }
+
+  };
+
+  // init event type
+  if ($('.event-type').length){
+
+    var eventType = $('.event-type input[checked]').attr('id');
+    
+    if (eventType.indexOf('one-day') >= 0) {
+
+      $('.event-multiple-days').hide();
+      $('.event-one-day').show();
+
+    } else if (eventType.indexOf('multiple-day') >= 0) {
+
+      $('.event-multiple-days').show();
+      $('.event-one-day').hide();
+
+    }
+
+  }
+  
+
+  // Events
+  $('.add-day').on('click', addDay);
+  $('body').on('click', '.remove-day', removeDay);
+
+  $('body').on('change', '.event-type input', selectEventType);
+
   $('#reservations-update').on('submit', submitUpdateForm);
 
+  $('.btn-delete-image').on('click', function(e) {
+    e.stopPropagation();
+  });
 
 
   
