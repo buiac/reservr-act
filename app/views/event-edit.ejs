@@ -94,7 +94,7 @@
 
         <div class="event-type">
           
-          <input type="radio" name="eventType" id="one-day" value="0" <% if (theEvent.eventType == 0) { %> checked <% } %> >
+          <input type="radio" name="eventType" id="one-day" value="0" <% if (theEvent.eventType == 0 || !theEvent.eventType ) { %> checked <% } %> >
           <label for="one-day">One Day Event</label>
 
           <input type="radio" name="eventType" id="multiple-day" value="1" <% if (theEvent.eventType == 1) { %> checked <% } %>>
