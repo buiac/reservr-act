@@ -163,7 +163,7 @@ module.exports = (function(config, db) {
 
             if (req.subdomains && req.subdomains.length === 1) {
 
-              ownerEmail = 'rezervari.reactor@yahoo.ro';
+              ownerEmail = 'hello@createactenjoy.com';
             
             }
 
